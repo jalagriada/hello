@@ -1,0 +1,232 @@
+const express = require('express')
+const app = express()
+
+// Middleware para sa JSON (for POST)
+app.use(express.json())
+
+// Temporary database (array lang)
+let students = []
+
+// ====================================
+// BASIC ROUTES
+// ====================================
+app.get('/', (req, res) => {
+    res.send('Welcome to Express Activity')
+})
+
+// ====================================
+// SCENARIO 1: Using Query Parameters (GET)
+// URL: http://localhost:3000/create?name=Vincent&section=ITEC321&age=20
+// ====================================
+app.get('/create', (req, res) => {
+    let name = req.query.name
+    let section = req.query.section
+    let age = req.query.age
+    
+    res.send(`
+        <h1>Student Created!</h1>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Section:</strong> ${section}</p>
+        <p><strong>Age:</strong> ${age}</p>
+        <br>
+        <a href="/">Back to Home</a>
+    `)
+})
+
+// ====================================
+// SCENARIO 2: Using Route Parameters
+// URL: http://localhost:3000/student/Vincent/ITEC321/20
+// ====================================
+app.get('/student/:name/:section/:age', (req, res) => {
+    let name = req.params.name
+    let section = req.params.section
+    let age = req.params.age
+    
+    res.send(`
+        <h1>Student Information</h1>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Section:</strong> ${section}</p>
+        <p><strong>Age:</strong> ${age}</p>
+        <br>
+        <a href="/">Back to Home</a>
+    `)
+})
+
+// ====================================
+// SCENARIO 3: Using POST (with JSON body)
+// URL: http://localhost:3000/student
+// HEADERS: Content-Type: application/json
+// BODY: { "name": "Vincent", "section": "ITEC321", "age": 20 }
+// ====================================
+app.post('/student', (req, res) => {
+    let name = req.body.name
+    let section = req.body.section
+    let age = req.body.age
+    
+    // I-save sa temporary database
+    let newStudent = {
+        name: name,
+        section: section,
+        age: age
+    }
+    students.push(newStudent)
+    
+    res.json({
+        message: "Student created successfully",
+        student: newStudent,
+        totalStudents: students.length
+    })
+})
+
+// ====================================
+// SCENARIO 4: Registration Form (HTML Form)
+// URL: http://localhost:3000/register
+// ====================================
+app.get('/register', (req, res) => {
+    res.send(`
+        <h2>Student Registration Form</h2>
+        <form action="/submit" method="GET">
+            <label>Name:</label><br>
+            <input type="text" name="name" placeholder="Enter name" required><br><br>
+            
+            <label>Section:</label><br>
+            <input type="text" name="section" placeholder="Enter section" required><br><br>
+            
+            <label>Age:</label><br>
+            <input type="number" name="age" placeholder="Enter age" required><br><br>
+            
+            <button type="submit">Register Student</button>
+        </form>
+        <br>
+        <a href="/">Back to Home</a>
+    `)
+})
+
+// ====================================
+// SCENARIO 4b: Form Submission (GET)
+// URL: http://localhost:3000/submit?name=Vincent&section=ITEC321&age=20
+// ====================================
+app.get('/submit', (req, res) => {
+    let name = req.query.name
+    let section = req.query.section
+    let age = req.query.age
+    
+    // I-save sa database
+    let newStudent = {
+        name: name,
+        section: section,
+        age: age
+    }
+    students.push(newStudent)
+    
+    res.send(`
+        <h2>Registration Successful!</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Section:</strong> ${section}</p>
+        <p><strong>Age:</strong> ${age}</p>
+        <p><strong>Total Students:</strong> ${students.length}</p>
+        <br>
+        <a href="/register">Add Another Student</a><br>
+        <a href="/students">View All Students</a><br>
+        <a href="/">Back to Home</a>
+    `)
+})
+
+// ====================================
+// SCENARIO 5: View All Students
+// URL: http://localhost:3000/students
+// ====================================
+app.get('/students', (req, res) => {
+    let studentList = ''
+    
+    for(let i = 0; i < students.length; i++) {
+        studentList = studentList + `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${students[i].name}</td>
+                <td>${students[i].section}</td>
+                <td>${students[i].age}</td>
+            </tr>
+        `
+    }
+    
+    res.send(`
+        <h2>All Students</h2>
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Section</th>
+                <th>Age</th>
+            </tr>
+            ${studentList}
+        </table>
+        <br>
+        <a href="/register">Add New Student</a><br>
+        <a href="/">Back to Home</a>
+    `)
+})
+
+// ====================================
+// SCENARIO 6: Find Student by Name (Query)
+// URL: http://localhost:3000/search?name=Vincent
+// ====================================
+app.get('/search', (req, res) => {
+    let searchName = req.query.name
+    let found = null
+    
+    for(let i = 0; i < students.length; i++) {
+        if(students[i].name.toLowerCase() === searchName.toLowerCase()) {
+            found = students[i]
+            break
+        }
+    }
+    
+    if(found) {
+        res.send(`
+            <h2>Student Found!</h2>
+            <p><strong>Name:</strong> ${found.name}</p>
+            <p><strong>Section:</strong> ${found.section}</p>
+            <p><strong>Age:</strong> ${found.age}</p>
+        `)
+    } else {
+        res.send(`
+            <h2>Student Not Found</h2>
+            <p>No student named "${searchName}" found.</p>
+        `)
+    }
+})
+
+// ====================================
+// SCENARIO 7: Calculator (from your activity)
+// URL: http://localhost:3000/calculator?num1=10&num2=5&operation=add
+// ====================================
+app.get('/calculator', (req, res) => {
+    let num1 = parseInt(req.query.num1)
+    let num2 = parseInt(req.query.num2)
+    let operation = req.query.operation
+    let result
+    
+    if(operation === 'add') result = num1 + num2
+    else if(operation === 'subtract') result = num1 - num2
+    else if(operation === 'multiply') result = num1 * num2
+    else if(operation === 'divide') {
+        if(num2 === 0) result = 'Cannot divide by zero'
+        else result = num1 / num2
+    }
+    else result = 'Invalid operation'
+    
+    res.send(`
+        <h2>Calculator Result</h2>
+        <p>${num1} ${operation} ${num2} = ${result}</p>
+        <br>
+        <a href="/">Back to Home</a>
+    `)
+})
+
+// ====================================
+// Run Server
+// ====================================
+app.listen(3000, () => {
+    console.log('Server running on http://localhost:3000')
+})

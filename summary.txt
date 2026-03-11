@@ -1,10 +1,10 @@
 const express = require('express')
 const app = express()
 
-// Middleware para sa JSON (for POST)
+// Middleware for JSON (for POST requests)
 app.use(express.json())
 
-// Temporary database (array lang)
+// Temporary database (just an array)
 let students = []
 
 // ====================================
@@ -63,7 +63,7 @@ app.post('/student', (req, res) => {
     let section = req.body.section
     let age = req.body.age
     
-    // I-save sa temporary database
+    // Save to temporary database
     let newStudent = {
         name: name,
         section: section,
@@ -111,7 +111,7 @@ app.get('/submit', (req, res) => {
     let section = req.query.section
     let age = req.query.age
     
-    // I-save sa database
+    // Save to database
     let newStudent = {
         name: name,
         section: section,

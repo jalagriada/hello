@@ -1,0 +1,63 @@
+const express = require('express')
+const app = express()
+
+// GET root
+app.get('/', (req, res) => {
+    res.send('Welcome to Express Activity')
+})
+
+// GET /student
+app.get('/student', (req, res) => {
+    res.send('List of students')
+})
+
+// Route param
+app.get('/students/:id', (req, res) => {
+    res.send('Student ID: ' + req.params.id)
+})
+
+// Multiple route params
+app.get('/students/:studentId/courses/:courseId', (req, res) => {
+    res.send(`Student ID: ${req.params.studentId}, Course ID: ${req.params.courseId}`)
+})
+
+// Query param
+app.get('/search', (req, res) => {
+    res.send('Name: ' + req.query.name + ', Course: ' + req.query.course)
+})
+
+// CALCULATOR - DITO MO ILAGAY (bago ng listen)
+app.get('/calculator', (req, res) => {
+    let num1 = parseInt(req.query.num1)
+    let num2 = parseInt(req.query.num2)
+    let operation = req.query.operation
+    let result
+    
+    if(operation === 'add') result = num1 + num2
+    else if(operation === 'subtract') result = num1 - num2
+    else if(operation === 'multiply') result = num1 * num2
+    else if(operation === 'divide') result = num1 / num2
+    else result = 'Invalid operation'
+    
+    res.send('Result: ' + result)
+})
+
+// POST route
+app.post('/student', (req, res) => {
+    res.send('Student created')
+})
+
+// PUT route
+app.put('/student', (req, res) => {
+    res.send('Student updated')
+})
+
+// DELETE route
+app.delete('/student', (req, res) => {
+    res.send('Student deleted')
+})
+
+// Run server (ITO dapat PINAKA-ILALIM!)
+app.listen(3000, () => {
+    console.log('Server running on http://localhost:3000')
+})

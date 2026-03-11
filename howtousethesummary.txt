@@ -1,0 +1,10 @@
+📋 How to Use:
+Route	Method	URL Example	Purpose
+/create	GET	/create?name=Vincent&section=ITEC321&age=20	Create via query
+/student/:name/:section/:age	GET	/student/Vincent/ITEC321/20	Create via params
+/student	POST	(with JSON body)	Create via POST
+/register	GET	/register	Show registration form
+/submit	GET	/submit?name=Vincent&section=ITEC321&age=20	Process form
+/students	GET	/students	View all students
+/search	GET	/search?name=Vincent	Search student
+/calculator	GET	/calculator?num1=10&num2=5&operation=add	Calculator

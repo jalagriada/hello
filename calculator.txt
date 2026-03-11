@@ -26,7 +26,6 @@ app.get('/search', (req, res) => {
     res.send('Name: ' + req.query.name + ', Course: ' + req.query.course)
 })
 
-// CALCULATOR - DITO MO ILAGAY (bago ng listen)
 app.get('/calculator', (req, res) => {
     let num1 = parseInt(req.query.num1)
     let num2 = parseInt(req.query.num2)
@@ -57,7 +56,7 @@ app.delete('/student', (req, res) => {
     res.send('Student deleted')
 })
 
-// Run server (ITO dapat PINAKA-ILALIM!)
+// Run server 
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000')
 })
